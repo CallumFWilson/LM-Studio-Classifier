@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 
+def get_base_dir(folder):
+    return os.path.join(os.getcwd(), folder)
+
 def merge_classified_and_unclassified(base_dir=None):
     """
     Merges classified and unclassified CSV files in subdirectories under the base directory.
@@ -58,3 +61,18 @@ def merge_classified_and_unclassified(base_dir=None):
 
                 except Exception as e:
                     print(f"❌ Error processing '{keyword}' in '{category}': {e}")
+
+def rename_guidance_files(base_dir):
+    for subfolder in os.listdir(base_dir):
+        subfolder_path = os.path.join(base_dir, subfolder)
+        
+        if os.path.isdir(subfolder_path):
+            original_file = os.path.join(subfolder_path, "guidance.csv")
+            renamed_file = os.path.join(subfolder_path, f"{subfolder}_guidance.csv")
+
+            if os.path.exists(original_file):
+                if not os.path.exists(renamed_file):
+                    os.rename(original_file, renamed_file)
+                    print(f"Renamed: {original_file} → {renamed_file}")
+                else:
+                    print(f"Skipped: {renamed_file} already exists")
