@@ -7,7 +7,7 @@ This project processes and prepares categorized data for classification tasks. I
 
 ## 📁 Project Structure
 
-<pre> ```text project/ ├── categories/ # Contains keyword-specific data folders │ └── keyword/ # Each folder corresponds to a classification category │ ├── keyword.csv │ ├── keyword_classified.csv │ ├── keyword_unclassified.csv │ └── keyword_guidance.csv ├── processing/ # Data processing logic │ ├── merge.py # Merging classified and unclassified CSVs │ ├── guidance.py # Load & rename guidance files │ ├── segment.py # Load keyword data CSV ├── utils/ # Utility functions │ ├── paths.py # get_base_dir() utility │ ├── prompt.py # Load prompt text and format guidance tables ├── prompt.txt # Reusable prompt instruction template ├── submit.py # Main entry point to run the pipeline ``` </pre>
+```text project/ ├── categories/ # Contains keyword-specific data folders │ └── keyword/ # Each folder corresponds to a classification category │ ├── keyword.csv │ ├── keyword_classified.csv │ ├── keyword_unclassified.csv │ └── keyword_guidance.csv ├── processing/ # Data processing logic │ ├── merge.py # Merging classified and unclassified CSVs │ ├── guidance.py # Load & rename guidance files │ ├── segment.py # Load keyword data CSV ├── utils/ # Utility functions │ ├── paths.py # get_base_dir() utility │ ├── prompt.py # Load prompt text and format guidance tables ├── prompt.txt # Reusable prompt instruction template ├── submit.py # Main entry point to run the pipeline ```
 
 ---
 
@@ -36,4 +36,7 @@ This project processes and prepares categorized data for classification tasks. I
   - Constructs the final prompt to send to the language model.
   - Combines the base instruction, guidance table, and the current text segment.
   - Produces a structured prompt with strict response formatting rules.
-  - 
+
+### 🤖 Model Inference
+- `call_lm_studio(prompt, model_name, server_url)`
+  - Sends a prompt to a local LM Studio server and returns a list extracted from the model output.
