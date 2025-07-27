@@ -1,9 +1,6 @@
 import os
 import pandas as pd
 
-def get_base_dir(base_dir):
-    return os.path.join(os.getcwd(), base_dir)
-
 def merge_classified_and_unclassified(base_dir):
     """
     Merges classified and unclassified CSV files in subdirectories under the given base directory.
@@ -57,31 +54,4 @@ def merge_classified_and_unclassified(base_dir):
 
                 except Exception as e:
                     print(f"❌ Error processing '{keyword}' in '{category}': {e}")
-
-def rename_guidance_files(base_dir):
-    for subfolder in os.listdir(base_dir):
-        subfolder_path = os.path.join(base_dir, subfolder)
-        
-        if os.path.isdir(subfolder_path):
-            original_file = os.path.join(subfolder_path, "guidance.csv")
-            renamed_file = os.path.join(subfolder_path, f"{subfolder}_guidance.csv")
-
-            if os.path.exists(original_file):
-                if not os.path.exists(renamed_file):
-                    os.rename(original_file, renamed_file)
-                    print(f"Renamed: {original_file} → {renamed_file}")
-                else:
-                    print(f"Skipped: {renamed_file} already exists")
-
-def load_segment_csv(base_dir, keyword):
-    csv_path = os.path.join(base_dir, keyword, f"{keyword}.csv")
-    return pd.read_csv(csv_path)
-
-def load_guidance_csv(base_dir, keyword):
-    guidance_path = os.path.join(base_dir, keyword, f"{keyword}_guidance.csv")
-    return pd.read_csv(guidance_path)
-
-def load_prompt(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return f.read()
-
+                    
