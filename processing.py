@@ -1,20 +1,16 @@
 import os
 import pandas as pd
 
-def get_base_dir(folder):
-    return os.path.join(os.getcwd(), folder)
+def get_base_dir(base_dir):
+    return os.path.join(os.getcwd(), base_dir)
 
-def merge_classified_and_unclassified(base_dir=None):
+def merge_classified_and_unclassified(base_dir):
     """
-    Merges classified and unclassified CSV files in subdirectories under the base directory.
+    Merges classified and unclassified CSV files in subdirectories under the given base directory.
 
     Args:
         base_dir (str): Path to the base directory containing category subfolders.
-                        Defaults to ./categories if not provided.
     """
-    if base_dir is None:
-        base_dir = os.path.join(os.getcwd(), "categories")
-
     if not os.path.isdir(base_dir):
         print(f"❌ Base directory does not exist: {base_dir}")
         return
