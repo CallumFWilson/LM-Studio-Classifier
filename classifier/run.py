@@ -49,3 +49,32 @@ def classification(base_dir, keyword, model_name):
     output_file = os.path.join(folder, f"{keyword}_classified_segments_{model_name}.csv")
     pd.DataFrame(results).to_csv(output_file, index=False)
     print(f"🎉 Done! Results saved to '{output_file}'")
+
+def find_unclassified_keywords(base_dir, model_name):
+    """
+    Scans category folders and returns a list of keywords that do not have
+    the expected classification output file.
+
+    Args:
+        base_dir (str): Root directory containing keyword folders.
+        model_name (str): Name of the model used for classification.
+
+    Returns:
+        List[str]: List of keywords missing the classified output file.
+    """
+    missing = []
+
+    for keyword in os.listdir(base_dir):
+        keyword_path = os.path.join(base_dir, keyword)
+
+        if not os.path.isdir(keyword_path):
+            continue  # skip files
+
+        expected_file = os.path.join(
+            keyword_path, f"{keyword}_classified_segments_{model_name}.csv"
+        )
+
+        if not os.path.exists(expected_file):
+            missing.append(keyword)
+
+    return missing

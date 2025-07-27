@@ -25,7 +25,7 @@ LM-Studio-Classifier/
 ├── classifier/                  # Model communication and classification pipeline
 │   ├── lm_interface.py         # Call LM Studio API with prompt and model name
 │   ├── utils.py                # Extract list of codes from model response
-│   ├── run.py                  # classification() - full inference loop
+│   ├── run.py                  # classification() and find_unclassified_keywords()
 ├── prompt.txt                   # Reusable prompt instruction template
 
 
