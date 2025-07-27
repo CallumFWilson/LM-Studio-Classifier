@@ -7,7 +7,29 @@ This project processes and prepares categorized data for classification tasks. I
 
 ## 📁 Project Structure
 
-```text project/ ├── categories/ # Contains keyword-specific data folders │ └── keyword/ # Each folder corresponds to a classification category │ ├── keyword.csv │ ├── keyword_classified.csv │ ├── keyword_unclassified.csv │ └── keyword_guidance.csv ├── processing/ # Data processing logic │ ├── merge.py # Merging classified and unclassified CSVs │ ├── guidance.py # Load & rename guidance files │ ├── segment.py # Load keyword data CSV ├── utils/ # Utility functions │ ├── paths.py # get_base_dir() utility │ ├── prompt.py # Load prompt text and format guidance tables ├── prompt.txt # Reusable prompt instruction template ├── submit.py # Main entry point to run the pipeline ```
+```text
+LM-Studio-Classifier/
+├── categories/                  # Contains keyword-specific data folders
+│   └── keyword/                # Each folder corresponds to a classification category
+│       ├── keyword.csv
+│       ├── keyword_classified.csv
+│       ├── keyword_unclassified.csv
+│       └── keyword_guidance.csv
+├── processing/                  # Data processing logic
+│   ├── merge.py                # Merge classified and unclassified CSVs
+│   ├── guidance.py             # Load & rename guidance files
+│   ├── segment.py              # Load keyword data CSV
+├── utils/                       # Utility functions
+│   ├── paths.py                # get_base_dir() utility
+│   ├── prompt.py               # Load prompt text, format guidance, build full prompt
+├── classifier/                  # Model communication and classification pipeline
+│   ├── lm_interface.py         # Call LM Studio API with prompt and model name
+│   ├── utils.py                # Extract list of codes from model response
+│   ├── run.py                  # classification() - full inference loop
+├── prompt.txt                   # Reusable prompt instruction template
+
+
+```
 
 ---
 
@@ -38,5 +60,20 @@ This project processes and prepares categorized data for classification tasks. I
   - Produces a structured prompt with strict response formatting rules.
 
 ### 🤖 Model Inference
-- `call_lm_studio(prompt, model_name, server_url)`
-  - Sends a prompt to a local LM Studio server and returns a list extracted from the model output.
+- `classification(base_dir, keyword, model_name)`  
+  Runs the full classification pipeline:
+  - Loads guidance, prompt text, and segments
+  - Builds a prompt for each segment
+  - Sends each prompt to LM Studio via API
+  - Parses and saves predictions to a CSV file  
+  **Output saved to:**  
+  `categories/<keyword>/<keyword>_classified_segments_<model_name>.csv`
+
+- `call_lm_studio(prompt, model_name, server_url="http://localhost:1234/v1/completions")`  
+  Sends a prompt to a local LM Studio server and returns a list of topic codes extracted from the model's response.  
+  Accepts a model name and optional server URL.
+
+- `extract_list_from_response(response)`  
+  Extracts topic codes from the model’s raw response.  
+  - Attempts to parse a JSON list first (e.g. `["GChRhet", "GChSubs"]`)  
+  - Falls back to extracting quoted strings if the response is unstructured
