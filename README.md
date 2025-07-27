@@ -7,22 +7,7 @@ This project processes and prepares categorized data for classification tasks. I
 
 ## 📁 Project Structure
 
-project/
-├── categories/ # Contains keyword-specific data folders
-│ └── keyword/
-│ ├── keyword.csv
-│ ├── keyword_classified.csv
-│ ├── keyword_unclassified.csv
-│ └── keyword_guidance.csv
-├── processing/
-│ ├── merge.py # Merging classified and unclassified CSVs
-│ ├── guidance.py # Load & rename guidance files
-│ ├── segment.py # Load keyword data CSV
-├── utils/
-│ ├── paths.py # get_base_dir() utility
-│ ├── prompt.py # Load prompt text and format guidance tables
-├── prompt.txt # Reusable prompt template
-├── submit.py # Main entry point to run the pipeline
+<pre> ```text project/ ├── categories/ # Contains keyword-specific data folders │ └── keyword/ # Each folder corresponds to a classification category │ ├── keyword.csv │ ├── keyword_classified.csv │ ├── keyword_unclassified.csv │ └── keyword_guidance.csv ├── processing/ # Data processing logic │ ├── merge.py # Merging classified and unclassified CSVs │ ├── guidance.py # Load & rename guidance files │ ├── segment.py # Load keyword data CSV ├── utils/ # Utility functions │ ├── paths.py # get_base_dir() utility │ ├── prompt.py # Load prompt text and format guidance tables ├── prompt.txt # Reusable prompt instruction template ├── submit.py # Main entry point to run the pipeline ``` </pre>
 
 ---
 
@@ -47,3 +32,8 @@ project/
   - Loads the base instruction or template for the model prompt.
 - `get_guidance_table(guidance_df)`
   - Converts the guidance DataFrame into a markdown-formatted table.
+- `build_prompt(segment_id, segment_text, guidance_string, instruction_text)`
+  - Constructs the final prompt to send to the language model.
+  - Combines the base instruction, guidance table, and the current text segment.
+  - Produces a structured prompt with strict response formatting rules.
+  - 
