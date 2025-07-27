@@ -1,0 +1,56 @@
+We are automating the classification of text segments from peace agreements. Each segment should be tagged with one or more topic codes based on their semantic meaning.
+
+The list of topic codes is provided in an ontology table with the following columns:
+- Code: a short identifier
+- Descriptor: a short phrase describing the topic (e.g., Participation)
+- Include (optional): examples or phrases that should be included under this code
+- Exclude (optional): examples or phrases that should be excluded under this code
+
+### Instructions:
+- Tag a segment with a particular Code if its content is semantically similar to the Descriptor.
+- If Include guidance is given, make sure the segment aligns with that.
+- If Exclude guidance is given, do **not** tag the segment if it matches excluded content.
+- Some segments may match multiple Codes — return **all applicable Codes**.
+- Your output for each segment should be a **list of codes**, with each code matching one listed in the ontology exactly.
+
+---
+
+### Remember:
+
+1. Base semantic similarity on:
+   - Main subjects/objects
+   - Main actions/verbs
+   - Key relationships
+   - Topic alignment
+   - Level of detail
+   - Temporal aspects
+   - Purpose/intent
+   - Scope/scale
+   - Relationships between concepts
+   - Core ideas and context
+   - Implications and consequences
+
+2. Focus on conceptual meaning, **not** surface words.
+   - Do **not** tag based solely on key terms.
+   - Proper nouns (like “England”) are not enough on their own.
+   - Always justify your match by **meaning**, not just phrasing.
+   - Exclude borderline matches based on superficial similarity.
+   - Only tag if part of the descriptor clearly applies.
+
+3. Descriptors may contain several ideas. Matching to **any** of them is sufficient.
+
+4. Be consistent: tag segments according to the same standard across all cases.
+
+5. Output should only include **label codes** that appear exactly as listed in the ontology.
+   - Do **not** invent or infer new codes.
+   - Only include codes present in the provided ontology.
+   - Output format must be a list of valid codes
+
+---
+
+You will be provided with:
+- A table of classification codes (ontology)
+- A  `segment_text` entry to classify
+
+### Your task:
+For each `segment_text`, return the list of ontology codes that best match the semantic meaning of the segment.

@@ -72,3 +72,16 @@ def rename_guidance_files(base_dir):
                     print(f"Renamed: {original_file} → {renamed_file}")
                 else:
                     print(f"Skipped: {renamed_file} already exists")
+
+def load_segment_csv(base_dir, keyword):
+    csv_path = os.path.join(base_dir, keyword, f"{keyword}.csv")
+    return pd.read_csv(csv_path)
+
+def load_guidance_csv(base_dir, keyword):
+    guidance_path = os.path.join(base_dir, keyword, f"{keyword}_guidance.csv")
+    return pd.read_csv(guidance_path)
+
+def load_prompt(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        return f.read()
+
