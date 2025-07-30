@@ -77,3 +77,30 @@ LM-Studio-Classifier/
   Extracts topic codes from the model’s raw response.  
   - Attempts to parse a JSON list first (e.g. `["GChRhet", "GChSubs"]`)  
   - Falls back to extracting quoted strings if the response is unstructured
+
+### 🗂️ Classification Management
+- `find_unclassified_keywords(base_dir, model_name)`  
+  Scans all keyword folders in `categories/` and returns those missing their classified output file.  
+  Useful for identifying folders that still need classification before running inference.
+  
+- `classify_all_missing_keywords(base_dir, model_name)`  
+  Automatically runs classification for all keywords that don’t yet have a classified output for the given model.  
+  Useful for batch-inferencing remaining categories.
+
+- `classify_all_keywords_for_models(base_dir, model_names)`  
+  Runs classification for every keyword in `categories/` using multiple model names.  
+  Useful for large-scale multi-model comparison.
+
+### 🧪 Post-Classification Analysis
+- `load_classification_outputs(folder, keyword, model_name)`  
+  Loads both the LLM-generated classification output and the manually labeled CSV for comparison.
+
+- `merge_classifications(llm_df, manual_df, guidance_df)`  
+  Merges LLM and manual DataFrames, parses label columns, applies label mapping from lookup dictionary.
+
+- `compute_classification_comparison(df, valid_codes, folder, keyword, model_name)`  
+  Computes TP, TN, FP, FN for each segment and saves the output as `<keyword>_comparison_<model_name>.csv`.
+
+- `compare_all_keywords_for_models(base_dir, model_names)`  
+  Runs full post-classification analysis for every keyword and model pair.
+

@@ -78,3 +78,25 @@ def find_unclassified_keywords(base_dir, model_name):
             missing.append(keyword)
 
     return missing
+
+def classify_all_missing_keywords(base_dir, model_name):
+    """
+    Runs classification on all keyword folders missing model output.
+
+    Args:
+        base_dir (str): Path to the categories directory
+        model_name (str): Name of the model used in classification
+    """
+    missing_keywords = find_unclassified_keywords(base_dir, model_name)
+
+    if not missing_keywords:
+        print("✅ All keywords are already classified.")
+        return
+
+    print(f"🚀 Running classification for {len(missing_keywords)} missing keywords...\n")
+
+    for i, keyword in enumerate(missing_keywords, start=1):
+        print(f"🔎 [{i}/{len(missing_keywords)}] Classifying '{keyword}'")
+        classification(base_dir, keyword, model_name)
+
+    print("🎉 Finished classifying all missing keywords.")
