@@ -22,6 +22,9 @@ def merge_classifications(llm_df, manual_df, guidance_df, lookup_path='lookup_di
     df = pd.merge(llm_df, manual_df, on="segment_id", how="outer")
     df = df[["segment_id", "llm_response", "manual_response", "issue_type"]].copy()
 
+    # ✅ Clear manual labels for unclassified rows (baseline fix)
+    df.loc[df["issue_type"] == "issues", "manual_response"] = [[""]]
+
     # Parse responses into lists
     df["llm_response"] = parse_label_column(df["llm_response"])
     df["manual_response"] = parse_label_column(df["manual_response"])
