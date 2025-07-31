@@ -104,3 +104,18 @@ LM-Studio-Classifier/
 - `compare_all_keywords_for_models(base_dir, model_names)`  
   Runs full post-classification analysis for every keyword and model pair.
 
+### 📊 Model Evaluation & Visualization
+- `generate_model_comparisons(model_names, base_dir, output_dir="comparisons")`
+  Creates a summary comparison table of TP, FP, FN counts for each model and keyword.
+  Also includes baseline (Anthropic) counts for manual labels.
+  Saves one CSV per keyword, plus an aggregate TOTAL summary.
+
+- `generate_model_venn_diagrams(model_names, base_dir, output_dir)`
+  Generates Venn diagrams per keyword comparing:
+
+  - Baseline vs TP∪FP for classified data
+
+  - Baseline vs TN∪FN for unclassified data
+  - Outputs side-by-side subplots for each model and keyword to visually assess overlap and divergence.
+  - Saved to `comparisons/<keyword>_venn_comparison_grid.png`.
+

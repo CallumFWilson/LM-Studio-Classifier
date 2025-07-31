@@ -2,8 +2,10 @@ import os
 import pandas as pd
 import ast
 from IPython.display import display
+import matplotlib.pyplot as plt
+from matplotlib_venn import venn2
 
-def generate_model_comparisons(model_names, base_dir, output_dir="comparisons"):
+def generate_model_comparisons(model_names, base_dir, output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
     total_sums = {}  # Accumulator for totals across all keywords
@@ -91,5 +93,76 @@ def generate_model_comparisons(model_names, base_dir, output_dir="comparisons"):
         total_df = pd.DataFrame(total_sums).T
         total_df = total_df[["baseline"] + model_names]  # Ensure column order
         total_df.to_csv(os.path.join(output_dir, "TOTAL_model_comparison.csv"))
-        print(f"\n✅ TOTAL summary saved to comparisons/TOTAL_model_comparison.csv")
+        print(f"\n✅ TOTAL summary saved to {output_dir}/TOTAL_model_comparison.csv")
         display(total_df)
+
+def generate_model_venn_diagrams(model_names, base_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+
+    def parsed(row, col):
+        try:
+            return ast.literal_eval(row[col])
+        except Exception:
+            return []
+
+    for keyword in os.listdir(base_dir):
+        keyword_path = os.path.join(base_dir, keyword)
+        if not os.path.isdir(keyword_path):
+            continue
+
+        print(f"\n📁 Keyword: {keyword}")
+
+        # Prepare all model data for this keyword
+        venn_data = {
+            "classified": [],
+            "unclassified": []
+        }
+
+        for model in model_names:
+            file_path = os.path.join(keyword_path, f"{keyword}_comparison_{model}.csv")
+            if not os.path.exists(file_path):
+                print(f"⚠️ Missing file: {file_path}")
+                continue
+
+            df = pd.read_csv(file_path)
+
+            auto_issues_df = df[df["issue_type"] == "auto_issues"]
+            issues_df = df[df["issue_type"] == "issues"]
+
+            # Baseline
+            BL_classified = set(auto_issues_df['segment_id'])
+            BL_unclassified = set(issues_df['segment_id'])
+
+            # Model outcomes
+            TP = {row['segment_id'] for _, row in auto_issues_df.iterrows()
+                  if len(parsed(row, 'llm_response')) > 0 and len(parsed(row, 'manual_response')) > 0}
+            TN = {row['segment_id'] for _, row in issues_df.iterrows()
+                  if len(parsed(row, 'llm_response')) == 0 and len(parsed(row, 'manual_response')) == 0}
+            FP = {row['segment_id'] for _, row in df.iterrows()
+                  if len(parsed(row, 'manual_response')) == 0 and len(parsed(row, 'llm_response')) > 0}
+            FN = {row['segment_id'] for _, row in df.iterrows()
+                  if len(parsed(row, 'manual_response')) > 0 and len(parsed(row, 'llm_response')) == 0}
+
+            venn_data["classified"].append((BL_classified, TP.union(FP), model))
+            venn_data["unclassified"].append((BL_unclassified, TN.union(FN), model))
+
+        # Create grid of subplots (2 rows: classified/unclassified, N columns for N models)
+        fig, axes = plt.subplots(2, len(model_names), figsize=(6 * len(model_names), 10))
+
+        for col, (bl_set, model_set, model_name) in enumerate(venn_data["classified"]):
+            ax = axes[0, col] if len(model_names) > 1 else axes[0]
+            plt.sca(ax)
+            venn2([bl_set, model_set], set_labels=("BL_classified", "TP ∪ FP"))
+            ax.set_title(f"{model_name} — Classified")
+
+        for col, (bl_set, model_set, model_name) in enumerate(venn_data["unclassified"]):
+            ax = axes[1, col] if len(model_names) > 1 else axes[1]
+            plt.sca(ax)
+            venn2([bl_set, model_set], set_labels=("BL_unclassified", "TN ∪ FN"))
+            ax.set_title(f"{model_name} — Unclassified")
+
+        plt.tight_layout()
+        plot_path = os.path.join(output_dir, f"{keyword}_venn_comparison_grid.png")
+        plt.savefig(plot_path)
+        plt.close()
+        print(f"✅ Saved grid Venn diagram: {plot_path}")
